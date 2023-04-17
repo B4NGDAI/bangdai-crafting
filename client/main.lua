@@ -1,6 +1,4 @@
 local RSGCore = exports['rsg-core']:GetCoreObject()
-local crafting = 0
-local deployedtable = nil
 
 Citizen.CreateThread(function()
     for _, v in pairs(Config.CraftingLocations) do
