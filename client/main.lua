@@ -40,7 +40,7 @@ RegisterNetEvent('rsg-crafting:client:craftingMenu', function()
             args = {
                 name = v.name,
                 item = k,
-                crafttime = v.crafttime,
+                craftingtime = v.craftingtime,
                 receive = v.receive
             }
         }
