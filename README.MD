@@ -1,4 +1,8 @@
-required ox_lib
+required {
+ox_lib
+rsg-targer
+}
+
 
 image:
 
