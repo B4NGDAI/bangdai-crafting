@@ -1,8 +1,8 @@
 required :
 
--ox_lib
+-ox_lib : https://github.com/overextended/ox_lib
 
--rsg-target
+-rsg-target : https://github.com/Rexshack-RedM/rsg-target
 
 
 
