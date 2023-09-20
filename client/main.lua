@@ -72,7 +72,7 @@ RegisterNetEvent('bangdai-crafting:client:craftingMenu', function(title)
             title = 'Crafting Menu',
             options = crafting
         })
-        lib.showContext('rsg:crafting')
+        lib.showContext('bangdai:crafting')
     else
         print("Invalid crafting category:", title)
     end
