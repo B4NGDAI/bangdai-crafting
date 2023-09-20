@@ -12,6 +12,7 @@ Config.CraftingLocations = {
         name = 'Crafting Blackwater',
         coords = vector3(-878.3790, -1362.1334, 43.5280),
         showblip = true,
+        title = 'weapon'
     }
 }
 
