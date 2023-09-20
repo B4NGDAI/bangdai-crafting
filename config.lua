@@ -1,20 +1,21 @@
-Config = {}
-Config.Debug = false
+Config = Config or {}
+Config.Crafting = {}
 
 Config.CraftingLocations = {
     {
-        name = 'Crafting Valentine', -- Nama lokasi crafting
-        coords = vector3(-369.4787, 796.1747, 116.3813), -- Koordinat lokasi crafting dalam format vector3
-        showblip = true -- Apakah ingin menampilkan blip pada lokasi crafting (true/false)
+        name = 'Crafting Valentine',
+        coords = vector3(-369.4787, 796.1747, 116.3813),
+        showblip = true,
+        title = 'tools'
     },
     {
-        name = 'Crafting Blackwater', -- Nama lokasi crafting
-        coords = vector3(-878.3790, -1362.1334, 43.5280), -- Koordinat lokasi crafting dalam format vector3
-        showblip = true -- Apakah ingin menampilkan blip pada lokasi crafting (true/false)
+        name = 'Crafting Blackwater',
+        coords = vector3(-878.3790, -1362.1334, 43.5280),
+        showblip = true,
     }
 }
 
-Config.CraftingIngrident = {
+Config.Crafting['tools'] = {
     ["Shovel"] = {
         name =  'shovel',
         craftingtime = 5000,
@@ -35,25 +36,14 @@ Config.CraftingIngrident = {
     }
 }
 
--- Config.CraftingIngrident['weapon'] = {
---     ["Revolver lemat"] = {
---         name =  'weapon_revolver_cattleman',
---         craftingtime = 5000,
---         ingredients = {
---             [1] = { item = "steel", amount = 1 },
---             [2] = { item = "copper", amount = 2 },
---             [3] = { item = "aluminum", amount = 1 }
---         },
---         receive = "weapon_revolver_cattleman"
---     },
---     ["Pistol Volcanic"] = {
---         name = 'weapon_pistol_volcanic',
---         craftingtime = 5000,
---         ingredients = {
---             [1] = { item = "steel", amount = 1 },
---             [2] = { item = "copper", amount = 2 },
---             [3] = { item = "aluminum", amount = 1 }
---         },
---         receive = "weapon_pistol_volcanic"
---     }
--- }
+Config.Crafting['weapon'] = {
+    ["Weapon Revolver"] = {
+        name = "revolver",
+        craftingtime = 5000,
+        ingredients = {
+            [1] = { item = "iron", amount = 1 },
+            [2] = { item = "wood", amount = 1 }
+        },
+        receive = "weapon_revolver_cattleman"
+    }
+}

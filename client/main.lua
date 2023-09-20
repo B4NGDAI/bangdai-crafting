@@ -1,85 +1,122 @@
 local RSGCore = exports['rsg-core']:GetCoreObject()
 
-Citizen.CreateThread(function()
+local function RegAnim()
+    local dict = "mech_inventory@crafting@fallbacks"
+    lib.requestAnimDict(dict)
+    while not HasAnimDictLoaded(dict) do
+        Wait(10)
+    end
+    local ped = PlayerPedId()
+    TaskPlayAnim(ped, dict, "full_craft_and_stow", 1.0, -1.0, -1, 1, 0, false, false, false)
+end
+
+CreateThread(function()
     for _, v in pairs(Config.CraftingLocations) do
         exports['rsg-target']:AddCircleZone(v.name, v.coords, 1, {
             name = v.name,
             debugPoly = false,
-          }, {
+        }, {
             options = {
-              {
-                type = "client",
-                event = 'rsg-crafting:client:craftingMenu',
-                icon = "fas fa-gear",
-                label = "Crafting",
-              },
+                {
+                    icon = "fas fa-gear",
+                    label = "Crafting",
+                    action = function()
+                        local title = v.title
+                        TriggerEvent("rsg-crafting:client:craftingMenu", title)
+                    end,
+                },
             },
             distance = 2.0,
-          })
-        if v.showblip == true then
-            local CraftingBlip = N_0x554d9d53f696d002(1664425300, v.coords)
-            SetBlipSprite(CraftingBlip, -758970771, 52)
-            SetBlipScale(CraftingBlip, 0.2)
-        end
+        })
+        if not v.showblip then return end
+        local CraftingBlip = N_0x554d9d53f696d002(1664425300, v.coords)
+        SetBlipSprite(CraftingBlip, -758970771, 52)
+        SetBlipScale(CraftingBlip, 0.2)
     end
 end)
 
-RegisterNetEvent('rsg-crafting:client:craftingMenu', function()
-    crafting = {}
-    for k, v in pairs(Config.CraftingIngrident) do
-        local item = {}
-        local text = ""
-        for k, v in pairs(v.ingredients) do
-            text = text .. " " .. RSGCore.Shared.Items[v.item].label .. ":" .. v.amount .. " x " .. ".."
-        end
-        crafting[#crafting + 1] = {
 
-            title = k,
-            description = text,
-            event = 'rsg-crafting:client:checkingredients',
-            args = {
-                name = v.name,
-                item = k,
-                craftingtime = v.craftingtime,
-                receive = v.receive
+RegisterNetEvent('rsg-crafting:client:craftingMenu', function(title)
+    local crafting = {}
+    local metadata = {}
+
+    local craftingCategory = Config.Crafting[title]
+
+    if craftingCategory then
+        for k, v in pairs(craftingCategory) do
+            metadata = {}
+
+            for i, ingredient in ipairs(v.ingredients) do
+                metadata[#metadata + 1] = {
+                    label = RSGCore.Shared.Items[ingredient.item].label,
+                    value = ingredient.amount
+                }
+            end
+
+            crafting[#crafting + 1] = {
+                title = k,
+                metadata = metadata,
+                event = 'rsg-crafting:client:checkingredients',
+                args = {
+                    name = v.name,
+                    item = k,
+                    craftingtime = v.craftingtime,
+                    receive = v.receive,
+                    ingredients = v.ingredients
+                }
             }
-        }
+        end
+
+        lib.registerContext({
+            id = 'rsg:crafting',
+            title = 'Crafting Menu',
+            options = crafting
+        })
+        lib.showContext('rsg:crafting')
+    else
+        print("Invalid crafting category:", title)
     end
-    lib.registerContext({
-        id = 'rsg:crafting',
-        title = 'Crafting Menu',
-        options = crafting
-    })
-    lib.showContext('rsg:crafting')
 end)
+
 
 RegisterNetEvent('rsg-crafting:client:checkingredients', function(data)
-    RSGCore.Functions.TriggerCallback('rsg-crafting:server:checkingredients', function(hasRequired)
-    if (hasRequired) then
-        if Config.Debug == true then
-            print("passed")
-        end
-        TriggerEvent('rsg-crafting:crafting', data.name, data.item, tonumber(data.craftingtime), data.receive)
-    else
-        if Config.Debug == true then
-            print("failed")
-        end
-        return
+    local input = lib.inputDialog('Crafting Amount', {
+        { type = 'input', label = 'Amount', required = true, min = 1, max = 50 },
+    })
+
+    if not input then return end
+
+    local jumlah = tonumber(input[1])
+
+    if jumlah then
+        RSGCore.Functions.TriggerCallback('rsg-crafting:server:checkingredients', function(hasRequired)
+            if (hasRequired) then
+                if Config.Debug == true then
+                    print("passed")
+                end
+                TriggerEvent('rsg-crafting:crafting', data.name, data.item, tonumber(data.craftingtime), data.receive, jumlah, data.ingredients)
+            else
+                if Config.Debug == true then
+                    print("failed")
+                end
+                return
+            end
+        end, data.ingredients, jumlah)
     end
-    end, Config.CraftingIngrident[data.item].ingredients)
 end)
 
-RegisterNetEvent('rsg-crafting:crafting', function(name, item, craftingtime, receive)
-    local ingredients = Config.CraftingIngrident[item].ingredients
+
+RegisterNetEvent('rsg-crafting:crafting', function(name, item, craftingtime, receive, jumlah, ingredients)
     local ped = PlayerPedId()
-    TaskStartScenarioInPlace(ped, GetHashKey('WORLD_HUMAN_CROUCH_INSPECT'), craftingtime, true, false, false, false)
+    RegAnim()
     RSGCore.Functions.Progressbar('crafting', 'crafting'..name, craftingtime, false, true, {
         disableMovement = true,
         disableCarMovement = true,
         disableMouse = false,
         disableCombat = true,
     }, {}, {}, {}, function() -- Done
-        TriggerServerEvent('rsg-crafting:server:finishcrafting', ingredients, receive)
+        -- Memanggil event 'rsg-crafting:server:finishcrafting' dengan data yang diperlukan
+        TriggerServerEvent('rsg-crafting:server:finishcrafting', ingredients, receive, jumlah)
         ClearPedTasks(ped)
     end)
 end)
