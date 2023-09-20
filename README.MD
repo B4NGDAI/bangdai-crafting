@@ -9,5 +9,5 @@ required :
 image:
 
 
-![Preview Video](https://www.youtube.com/watch?v=0FS6_-7kDDE)
+[Preview Video](https://www.youtube.com/watch?v=0FS6_-7kDDE)
 
