@@ -22,7 +22,7 @@ CreateThread(function()
                     label = "Crafting",
                     action = function()
                         local title = v.title
-                        TriggerEvent("rsg-crafting:client:craftingMenu", title)
+                        TriggerEvent("bangdai-crafting:client:craftingMenu", title)
                     end,
                 },
             },
@@ -36,7 +36,7 @@ CreateThread(function()
 end)
 
 
-RegisterNetEvent('rsg-crafting:client:craftingMenu', function(title)
+RegisterNetEvent('bangdai-crafting:client:craftingMenu', function(title)
     local crafting = {}
     local metadata = {}
 
@@ -56,7 +56,7 @@ RegisterNetEvent('rsg-crafting:client:craftingMenu', function(title)
             crafting[#crafting + 1] = {
                 title = k,
                 metadata = metadata,
-                event = 'rsg-crafting:client:checkingredients',
+                event = 'bangdai-crafting:client:checkingredients',
                 args = {
                     name = v.name,
                     item = k,
@@ -68,7 +68,7 @@ RegisterNetEvent('rsg-crafting:client:craftingMenu', function(title)
         end
 
         lib.registerContext({
-            id = 'rsg:crafting',
+            id = 'bangdai:crafting',
             title = 'Crafting Menu',
             options = crafting
         })
@@ -79,7 +79,7 @@ RegisterNetEvent('rsg-crafting:client:craftingMenu', function(title)
 end)
 
 
-RegisterNetEvent('rsg-crafting:client:checkingredients', function(data)
+RegisterNetEvent('bangdai-crafting:client:checkingredients', function(data)
     local input = lib.inputDialog('Crafting Amount', {
         { type = 'input', label = 'Amount', required = true, min = 1, max = 50 },
     })
@@ -89,12 +89,12 @@ RegisterNetEvent('rsg-crafting:client:checkingredients', function(data)
     local jumlah = tonumber(input[1])
 
     if jumlah then
-        RSGCore.Functions.TriggerCallback('rsg-crafting:server:checkingredients', function(hasRequired)
+        RSGCore.Functions.TriggerCallback('bangdai-crafting:server:checkingredients', function(hasRequired)
             if (hasRequired) then
                 if Config.Debug == true then
                     print("passed")
                 end
-                TriggerEvent('rsg-crafting:crafting', data.name, data.item, tonumber(data.craftingtime), data.receive, jumlah, data.ingredients)
+                TriggerEvent('bangdai-crafting:crafting', data.name, data.item, tonumber(data.craftingtime), data.receive, jumlah, data.ingredients)
             else
                 if Config.Debug == true then
                     print("failed")
@@ -106,7 +106,7 @@ RegisterNetEvent('rsg-crafting:client:checkingredients', function(data)
 end)
 
 
-RegisterNetEvent('rsg-crafting:crafting', function(name, item, craftingtime, receive, jumlah, ingredients)
+RegisterNetEvent('bangdai-crafting:crafting', function(name, item, craftingtime, receive, jumlah, ingredients)
     local ped = PlayerPedId()
     RegAnim()
     RSGCore.Functions.Progressbar('crafting', 'crafting'..name, craftingtime, false, true, {
@@ -115,8 +115,7 @@ RegisterNetEvent('rsg-crafting:crafting', function(name, item, craftingtime, rec
         disableMouse = false,
         disableCombat = true,
     }, {}, {}, {}, function() -- Done
-        -- Memanggil event 'rsg-crafting:server:finishcrafting' dengan data yang diperlukan
-        TriggerServerEvent('rsg-crafting:server:finishcrafting', ingredients, receive, jumlah)
+        TriggerServerEvent('bangdai-crafting:server:finishcrafting', ingredients, receive, jumlah)
         ClearPedTasks(ped)
     end)
 end)

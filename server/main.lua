@@ -1,6 +1,6 @@
 local RSGCore = exports['rsg-core']:GetCoreObject()
 
-RSGCore.Functions.CreateCallback('rsg-crafting:server:checkingredients', function(source, cb, ingredients, jumlah)
+RSGCore.Functions.CreateCallback('bangdai-crafting:server:checkingredients', function(source, cb, ingredients, jumlah)
     local src = source
     local icheck = 0
     local Player = RSGCore.Functions.GetPlayer(src)
@@ -20,8 +20,8 @@ RSGCore.Functions.CreateCallback('rsg-crafting:server:checkingredients', functio
 end)
 
 -- finish cooking
-RegisterServerEvent('rsg-crafting:server:finishcrafting')
-AddEventHandler('rsg-crafting:server:finishcrafting', function(ingredients, receive, jumlah)
+RegisterServerEvent('bangdai-crafting:server:finishcrafting')
+AddEventHandler('bangdai-crafting:server:finishcrafting', function(ingredients, receive, jumlah)
     local src = source
     local Player = RSGCore.Functions.GetPlayer(src)
     
