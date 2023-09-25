@@ -89,19 +89,19 @@ RegisterNetEvent('bangdai-crafting:client:checkingredients', function(data)
     local jumlah = tonumber(input[1])
 
     if jumlah then
-        RSGCore.Functions.TriggerCallback('bangdai-crafting:server:checkingredients', function(hasRequired)
-            if (hasRequired) then
-                if Config.Debug == true then
-                    print("passed")
-                end
-                TriggerEvent('bangdai-crafting:crafting', data.name, data.item, tonumber(data.craftingtime), data.receive, jumlah, data.ingredients)
-            else
-                if Config.Debug == true then
-                    print("failed")
-                end
-                return
+        local hasRequired = lib.callback.await('bangdai-crafting:server:checkingredients', false, data.ingredients, jumlah)
+        if hasRequired then
+            if Config.Debug then
+                print("passed")
             end
-        end, data.ingredients, jumlah)
+            TriggerEvent('bangdai-crafting:crafting', data.name, data.item, tonumber(data.craftingtime), data.receive, jumlah, data.ingredients)
+        else
+            if Config.Debug then
+                print("failed")
+            end
+            RSGCore.Functions.Notify('Not enough materials.', 'error')
+            return
+        end
     end
 end)
 

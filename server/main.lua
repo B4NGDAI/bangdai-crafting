@@ -1,21 +1,28 @@
 local RSGCore = exports['rsg-core']:GetCoreObject()
 
-RSGCore.Functions.CreateCallback('bangdai-crafting:server:checkingredients', function(source, cb, ingredients, jumlah)
-    local src = source
+lib.callback.register('bangdai-crafting:server:checkingredients', function(source, ingredients, jumlah)
+    local Player = RSGCore.Functions.GetPlayer(source)
     local icheck = 0
-    local Player = RSGCore.Functions.GetPlayer(src)
-    
-    for k, v in pairs(ingredients) do
-        if Player.Functions.GetItemByName(v.item) and Player.Functions.GetItemByName(v.item).amount >= v.amount * jumlah then
-            icheck = icheck + 1
-            if icheck == #ingredients then
-                cb(true)
-            end
+
+    if not Player then
+        return false
+    end
+
+    for _, v in pairs(ingredients) do
+        local requiredAmount = v.amount * jumlah
+        local playerItem = Player.Functions.GetItemByName(v.item)
+
+        if not playerItem or playerItem.amount < requiredAmount then
+            return false
         else
-            TriggerClientEvent('RSGCore:Notify', src, "you don't have enough required item: " .. v.item, 'error')
-            cb(false)
-            return
+            icheck = icheck + 1
         end
+    end
+
+    if icheck == #ingredients then
+        return true
+    else
+        return false
     end
 end)
 
@@ -35,7 +42,7 @@ AddEventHandler('bangdai-crafting:server:finishcrafting', function(ingredients, 
         TriggerClientEvent('inventory:client:ItemBox', src, RSGCore.Shared.Items[v.item], "remove")
     end
     
-    Player.Functions.AddItem(receive, jumlah) -- Hanya menambahkan 1 item yang dihasilkan
+    Player.Functions.AddItem(receive, jumlah)
     TriggerClientEvent('inventory:client:ItemBox', src, RSGCore.Shared.Items[receive], "add")
-    TriggerClientEvent('RSGCore:Notify', src, "Pembuatan selesai", 'success')
+    TriggerClientEvent('RSGCore:Notify', src, "Crafting Success", 'success')
 end)
