@@ -1,6 +1,8 @@
 Config = Config or {}
 Config.Crafting = {}
 
+Config.skillcheck = true -- set false if u want use progressbar
+
 Config.CraftingLocations = {
     {
         name = 'Crafting Valentine',

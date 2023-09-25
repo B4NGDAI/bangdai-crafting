@@ -59,7 +59,6 @@ RegisterNetEvent('bangdai-crafting:client:craftingMenu', function(title)
                 event = 'bangdai-crafting:client:checkingredients',
                 args = {
                     name = v.name,
-                    item = k,
                     craftingtime = v.craftingtime,
                     receive = v.receive,
                     ingredients = v.ingredients
@@ -94,7 +93,7 @@ RegisterNetEvent('bangdai-crafting:client:checkingredients', function(data)
             if Config.Debug then
                 print("passed")
             end
-            TriggerEvent('bangdai-crafting:crafting', data.name, data.item, tonumber(data.craftingtime), data.receive, jumlah, data.ingredients)
+            TriggerEvent('bangdai-crafting:crafting', data.name, tonumber(data.craftingtime), data.receive, jumlah, data.ingredients)
         else
             if Config.Debug then
                 print("failed")
@@ -105,17 +104,29 @@ RegisterNetEvent('bangdai-crafting:client:checkingredients', function(data)
     end
 end)
 
-
-RegisterNetEvent('bangdai-crafting:crafting', function(name, item, craftingtime, receive, jumlah, ingredients)
+RegisterNetEvent('bangdai-crafting:crafting', function(name, craftingtime, receive, jumlah, ingredients)
     local ped = PlayerPedId()
     RegAnim()
-    RSGCore.Functions.Progressbar('crafting', 'crafting'..name, craftingtime, false, true, {
-        disableMovement = true,
-        disableCarMovement = true,
-        disableMouse = false,
-        disableCombat = true,
-    }, {}, {}, {}, function() -- Done
-        TriggerServerEvent('bangdai-crafting:server:finishcrafting', ingredients, receive, jumlah)
-        ClearPedTasks(ped)
-    end)
+
+    if Config.skillcheck then
+        local ribet = lib.skillCheck({ 'easy', 'easy', 'easy', 'easy', 'easy', 'easy', 'easy', 'easy' },
+            { 'w', 'a', 's', 'd', 'w', 'a', 's', 'd' })
+        if ribet then
+            TriggerServerEvent('bangdai-crafting:server:finishcrafting', ingredients, receive, jumlah)
+            ClearPedTasks(ped)
+        else
+            RSGCore.Functions.Notify('Crafting failed.', 'error')
+            ClearPedTasks(ped)
+        end
+    else
+        RSGCore.Functions.Progressbar('crafting', 'crafting' .. name, craftingtime, false, true, {
+            disableMovement = true,
+            disableCarMovement = true,
+            disableMouse = false,
+            disableCombat = true,
+        }, {}, {}, {}, function()     -- Done
+            TriggerServerEvent('bangdai-crafting:server:finishcrafting', ingredients, receive, jumlah)
+            ClearPedTasks(ped)
+        end)
+    end
 end)
