@@ -113,10 +113,9 @@ RegisterNetEvent('bangdai-crafting:crafting', function(name, craftingtime, recei
             { 'w', 'a', 's', 'd', 'w', 'a', 's', 'd' })
         if ribet then
             TriggerServerEvent('bangdai-crafting:server:finishcrafting', ingredients, receive, jumlah)
-            ClearPedTasks(ped)
         else
             RSGCore.Functions.Notify('Crafting failed.', 'error')
-            ClearPedTasks(ped)
+
         end
     else
         RSGCore.Functions.Progressbar('crafting', 'crafting' .. name, craftingtime, false, true, {
@@ -126,7 +125,7 @@ RegisterNetEvent('bangdai-crafting:crafting', function(name, craftingtime, recei
             disableCombat = true,
         }, {}, {}, {}, function()     -- Done
             TriggerServerEvent('bangdai-crafting:server:finishcrafting', ingredients, receive, jumlah)
-            ClearPedTasks(ped)
         end)
     end
+    ClearPedTasks(ped)
 end)
