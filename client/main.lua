@@ -68,7 +68,7 @@ RegisterNetEvent('bangdai-crafting:client:craftingMenu', function(title)
 
         lib.registerContext({
             id = 'bangdai:crafting',
-            title = 'Crafting Menu',
+            title = 'crafting ' .. title,
             options = crafting
         })
         lib.showContext('bangdai:crafting')
