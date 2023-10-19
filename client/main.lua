@@ -110,7 +110,7 @@ RegisterNetEvent('bangdai-crafting:crafting', function(name, craftingtime, recei
 
     if Config.skillcheck then
         local ribet = lib.skillCheck({ 'easy', 'easy', 'easy', 'easy', 'easy', 'easy', 'easy', 'easy' },
-            { 'w', 'a', 's', 'd', 'w', 'a', 's', 'd' })
+            { 'w', 'a', 's', 'd' })
         if ribet then
             TriggerServerEvent('bangdai-crafting:server:finishcrafting', ingredients, receive, jumlah)
         else
